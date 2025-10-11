@@ -13,4 +13,5 @@ test('GET to /api/v1/status should return 200', async () => {
   expect(typeof responseBody.dependencies.database.max_connections).toBe(
     'number',
   );
+  expect(responseBody.dependencies.database.open_connections).toBe(1);
 });
