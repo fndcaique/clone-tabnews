@@ -3,7 +3,7 @@ import database from 'infra/database';
 export default async function status(request, response) {
   const updatedAt = new Date().toISOString();
   const {
-    rows: [{ server_version }],
+    rows: [{ server_version: version }],
   } = await database.query('SHOW server_version;');
 
   const {
@@ -11,9 +11,9 @@ export default async function status(request, response) {
   } = await database.query('SHOW max_connections;');
 
   const {
-    rows: [{ open_connections }],
+    rows: [{ opened_connections }],
   } = await database.query(
-    'SELECT numbackends AS open_connections FROM pg_stat_database WHERE datname = $1;',
+    'SELECT COUNT(*) AS opened_connections FROM pg_stat_activity WHERE datname = $1;',
     [process.env.POSTGRES_DB],
   );
 
@@ -21,9 +21,9 @@ export default async function status(request, response) {
     updated_at: updatedAt,
     dependencies: {
       database: {
-        server_version,
+        version,
         max_connections: Number.parseInt(max_connections, 10),
-        open_connections,
+        opened_connections: Number.parseInt(opened_connections, 10),
       },
     },
   });
