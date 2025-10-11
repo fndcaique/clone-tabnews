@@ -9,5 +9,8 @@ test('GET to /api/v1/status should return 200', async () => {
   expect(statusDate.getTime()).toBeGreaterThanOrEqual(dateNow.getTime());
   expect(responseBody.dependencies).toBeDefined();
   expect(responseBody.dependencies.database).toBeDefined();
-  expect(responseBody.dependencies.database.version).toBe('16.0');
+  expect(responseBody.dependencies.database.server_version).toBe('16.0');
+  expect(typeof responseBody.dependencies.database.max_connections).toBe(
+    'number',
+  );
 });
