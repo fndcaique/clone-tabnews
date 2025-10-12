@@ -14,7 +14,10 @@
     "lint": "biome check --verbose",
     "lint:fix": "biome check --write --verbose",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest",
-    "test:watch": "NODE_OPTIONS=--experimental-vm-modules jest --watchAll"
+    "test:watch": "NODE_OPTIONS=--experimental-vm-modules jest --watchAll",
+    "migration:create": "node-pg-migrate -m infra/migrations create",
+    "migration:up": "node-pg-migrate -m infra/migrations --envPath .env.development up",
+    "migration:down": "node-pg-migrate -m infra/migrations down"
   },
   "dependencies": {
     "next": "^14.2.33",
@@ -24,6 +27,8 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.5",
-    "jest": "^30.2.0"
+    "dotenv": "^17.2.3",
+    "jest": "^30.2.0",
+    "node-pg-migrate": "^8.0.3"
   }
 }
