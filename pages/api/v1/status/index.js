@@ -13,7 +13,7 @@ export default async function status(request, response) {
   const {
     rows: [{ opened_connections }],
   } = await database.query(
-    'SELECT COUNT(*) AS opened_connections FROM pg_stat_activity WHERE datname = $1;',
+    'SELECT COUNT(*) AS opened_connections FROM pg_stat_activity WHERE datname = ?;',
     [process.env.POSTGRES_DB],
   );
 

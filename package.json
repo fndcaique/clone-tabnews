@@ -15,11 +15,12 @@
     "lint:fix": "biome check --write --verbose",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest",
     "test:watch": "NODE_OPTIONS=--experimental-vm-modules jest --watchAll",
-    "migration:create": "node-pg-migrate -m infra/migrations create",
-    "migration:up": "node-pg-migrate -m infra/migrations --envPath .env.development up",
-    "migration:down": "node-pg-migrate -m infra/migrations down"
+    "migration:create": "node infra/scripts/create-migration.js",
+    "migration:up": "knex --knexfile infra/knexconfig.js --cwd ./ migrate:latest",
+    "migration:down": "knex --knexfile infra/knexconfig.js --cwd ./ migrate:rollback"
   },
   "dependencies": {
+    "knex": "^3.1.0",
     "next": "^14.2.33",
     "pg": "8.16.3",
     "react": "^18.3.1",
@@ -28,7 +29,6 @@
   "devDependencies": {
     "@biomejs/biome": "2.2.5",
     "dotenv": "^17.2.3",
-    "jest": "^30.2.0",
-    "node-pg-migrate": "^8.0.3"
+    "jest": "^30.2.0"
   }
 }

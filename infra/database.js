@@ -1,41 +1,43 @@
-import { Client } from 'pg';
+import Knex from 'knex';
+import KnexConfig from './knexconfig';
 
-const getSslValue = () => {
-  if (process.env.POSTGRES_CA) {
-    return {
-      rejectUnauthorized: true,
-      ca: process.env.POSTGRES_CA,
-    };
+const environment = process.env.NODE_ENV || 'development';
+
+let connectionInstance = null;
+
+async function isConnected() {
+  try {
+    await connectionInstance.raw('SELECT 1+1 AS result');
+    return true;
+  } catch {
+    return false;
   }
-  return !(process.env.NODE_ENV === 'development');
+}
+
+const connection = async () => {
+  if (!(await isConnected())) {
+    connectionInstance = Knex(KnexConfig[environment]);
+  }
+  return connectionInstance;
 };
 
-async function query(...params) {
-  const client = new Client({
-    host: process.env.POSTGRES_HOST,
-    port: Number.parseInt(process.env.POSTGRES_PORT, 10),
-    user: process.env.POSTGRES_USER,
-    database: process.env.POSTGRES_DB,
-    password: process.env.POSTGRES_PASSWORD,
-    ssl: getSslValue(),
-  });
+const query = async (...params) => {
+  let db;
   try {
     try {
-      await client.connect();
+      db = await connection();
     } catch (error) {
-      console.log('Error connecting to database');
+      console.error('Error connecting to database:', error);
       throw error;
     }
-    const result = await client.query(...params);
-    return result;
+    return await db.raw(...params);
   } catch (error) {
     console.error(error);
   } finally {
-    await client.end();
+    if (db) {
+      await db.destroy();
+    }
   }
-  return null;
-}
-
-export default {
-  query: query,
 };
+
+export default { query, connection };
