@@ -1,3 +1,4 @@
+import fs from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import dotenv from 'dotenv';
@@ -31,7 +32,7 @@ export const DATABASE = {
   database: process.env.POSTGRES_DB,
   ssl: getDatabaseSslValue(),
   migrations: {
-    directory: join(process.cwd(), 'infra', 'migrations'),
+    directory: join(__dirname, 'migrations'),
     tableName: 'pgmigrations',
   },
 };
