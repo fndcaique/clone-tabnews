@@ -1,3 +1,4 @@
+import fs from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import dotenv from 'dotenv';
@@ -35,3 +36,15 @@ export const DATABASE = {
     tableName: 'pgmigrations',
   },
 };
+
+function ensureMigrationsDirExists() {
+  const migrationsDir = DATABASE.migrations.directory;
+  if (!fs.existsSync(migrationsDir)) {
+    console.warn(
+      `⚠️ Diretório de migrations não encontrado. Criando: ${migrationsDir}`,
+    );
+    fs.mkdirSync(migrationsDir, { recursive: true });
+  }
+}
+
+ensureMigrationsDirExists();
