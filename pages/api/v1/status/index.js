@@ -1,3 +1,4 @@
+import { DATABASE } from '@/infra/config';
 import database from '@/infra/database';
 
 export default async function status(request, response) {
@@ -13,8 +14,8 @@ export default async function status(request, response) {
   const {
     rows: [{ opened_connections }],
   } = await database.query(
-    'SELECT COUNT(*) AS opened_connections FROM pg_stat_activity WHERE datname = ?;',
-    [process.env.POSTGRES_DB],
+    'SELECT COUNT(*) AS opened_connections FROM pg_stat_activity WHERE datname = $1;',
+    [DATABASE.database],
   );
 
   response.status(200).json({

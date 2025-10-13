@@ -1,42 +1,59 @@
+import { resolve } from 'node:path';
+import * as NodePgMigrate from 'node-pg-migrate';
 import database from '@/infra/database';
+
+const defaultMigrationOptions = {
+  dryRun: true,
+  dir: resolve('infra', 'migrations'),
+  direction: 'up',
+  log: () => {},
+  migrationsTable: 'pgmigrations',
+};
+const listPendingMigrations = async () => {
+  let dbClient;
+  try {
+    dbClient = await database.getClient();
+    const migrationsPending = await NodePgMigrate.runner({
+      ...defaultMigrationOptions,
+      dbClient,
+    });
+    return { pending: migrationsPending.map(({ name }) => name) };
+  } catch (error) {
+    console.error(error);
+    throw error;
+  } finally {
+    await dbClient.end();
+  }
+};
+
+const runPendingMigrations = async () => {
+  let dbClient;
+  try {
+    dbClient = await database.getClient();
+    const migrationsPending = await NodePgMigrate.runner({
+      ...defaultMigrationOptions,
+      dbClient,
+      dryRun: false,
+    });
+    return { executed: migrationsPending.map(({ name }) => name) };
+  } catch (error) {
+    console.error(error);
+    throw error;
+  } finally {
+    await dbClient.end();
+  }
+};
 
 export default async function migrations(request, response) {
   if (request.method === 'GET') {
-    const listMigrations = async () => {
-      const connection = await database.connection();
-      try {
-        const [_migrationsExecuted, migrationsNotExecuted] =
-          await connection.migrate.list();
-        const notExecuted = migrationsNotExecuted.map(({ file }) => file);
-        return { notExecuted };
-      } catch (error) {
-        console.error(error);
-        throw error;
-      } finally {
-        await connection.destroy();
-      }
-    };
-
-    const result = await listMigrations();
+    const result = await listPendingMigrations();
 
     response.status(200).json(result);
     return;
   }
-  if (request.method === 'POST') {
-    const runMigrations = async () => {
-      const connection = await database.connection();
-      try {
-        const [batch, executed] = await connection.migrate.latest();
-        return { batch, executed };
-      } catch (error) {
-        console.error(error);
-        throw error;
-      } finally {
-        await connection.destroy();
-      }
-    };
 
-    const result = await runMigrations();
+  if (request.method === 'POST') {
+    const result = await runPendingMigrations();
 
     response.status(result.executed.length ? 201 : 200).json(result);
     return;

@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import KnexConfig from '../knexconfig.js';
+import { DATABASE } from '../config.js';
 
 const migrationName = process.argv[2];
 
@@ -13,23 +13,27 @@ const filePrefix = new Date().toISOString().substring(0, 19).replace(/\D/g, '');
 
 const fileName = `${filePrefix}_${migrationName}.js`;
 
-const env = process.env.NODE_ENV || 'development';
-
-const migrationsDir = KnexConfig[env].migrations.directory;
+const migrationsDir = DATABASE.migrations.directory;
 const filePath = path.join(migrationsDir, fileName);
 
-// Template básico de migration Knex
 const template = `/**
- * @param { import("knex").Knex } knex
- * @returns { Promise<void> }
+ * @type {import('node-pg-migrate').ColumnDefinitions | undefined}
  */
-export const up = async (knex) => {}
+export const shorthands = undefined;
 
 /**
- * @param { import("knex").Knex } knex
- * @returns { Promise<void> }
+ * @param pgm {import('node-pg-migrate').MigrationBuilder}
+ * @param run {() => void | undefined}
+ * @returns {Promise<void> | void}
  */
-export const down = async (knex) => {}
+export const up = (pgm) => {};
+
+/**
+ * @param pgm {import('node-pg-migrate').MigrationBuilder}
+ * @param run {() => void | undefined}
+ * @returns {Promise<void> | void}
+ */
+export const down = (pgm) => {};
 `;
 
 if (!fs.existsSync(migrationsDir)) {

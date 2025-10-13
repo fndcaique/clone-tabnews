@@ -1,45 +1,51 @@
-import Knex from 'knex';
-import KnexConfig from './knexconfig';
+import { Client } from 'pg';
+import { DATABASE } from './config';
 
-const knexEnvConfig =
-  process.env.NODE_ENV === 'production' ? 'production' : 'development';
 let connectionConfig = null;
-let connectionInstance = null;
+let clientInstance = null;
 
 async function isConnected() {
   try {
-    await connectionInstance.raw('SELECT 1+1 AS result');
+    await clientInstance.query('SELECT 1+1 AS result');
     return true;
   } catch {
     return false;
   }
 }
 
-const connection = async () => {
+const getClient = async () => {
   if (!(await isConnected())) {
-    connectionConfig = KnexConfig[knexEnvConfig];
-    connectionInstance = Knex(connectionConfig);
+    connectionConfig = {
+      user: DATABASE.user,
+      password: DATABASE.password,
+      host: DATABASE.host,
+      port: DATABASE.port,
+      database: DATABASE.database,
+      ssl: DATABASE.ssl,
+    };
+    clientInstance = new Client(connectionConfig);
+    await clientInstance.connect();
   }
-  return connectionInstance;
+  return clientInstance;
 };
 
 const query = async (...params) => {
-  let db;
+  let client;
   try {
     try {
-      db = await connection();
+      client = await getClient();
     } catch (error) {
       console.error('Error connecting to database:', error);
       throw error;
     }
-    return await db.raw(...params);
+    return await client.query(...params);
   } catch (error) {
     console.error(error);
   } finally {
-    if (db) {
-      await db.destroy();
+    if (client) {
+      await client.end();
     }
   }
 };
 
-export default { query, connection };
+export default { query, getClient };
