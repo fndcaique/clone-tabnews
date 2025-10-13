@@ -1,8 +1,9 @@
 import Knex from 'knex';
 import KnexConfig from './knexconfig';
 
-const environment = process.env.NODE_ENV || 'development';
-
+const knexEnvConfig =
+  process.env.NODE_ENV === 'production' ? 'production' : 'development';
+let connectionConfig = null;
 let connectionInstance = null;
 
 async function isConnected() {
@@ -16,7 +17,8 @@ async function isConnected() {
 
 const connection = async () => {
   if (!(await isConnected())) {
-    connectionInstance = Knex(KnexConfig[environment]);
+    connectionConfig = KnexConfig[knexEnvConfig];
+    connectionInstance = Knex(connectionConfig);
   }
   return connectionInstance;
 };
