@@ -20,6 +20,7 @@ export default async function migrations(request, response) {
     const result = await listMigrations();
 
     response.status(200).json(result);
+    return;
   }
   if (request.method === 'POST') {
     const runMigrations = async () => {
@@ -38,6 +39,7 @@ export default async function migrations(request, response) {
     const result = await runMigrations();
 
     response.status(result.executed.length ? 201 : 200).json(result);
+    return;
   }
 
   return response.status(405).end();
