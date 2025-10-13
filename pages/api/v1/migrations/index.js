@@ -59,5 +59,7 @@ export default async function migrations(request, response) {
     return;
   }
 
-  return response.status(405).end();
+  return response
+    .status(405)
+    .json({ message: `Method ${request.method} not allowed` });
 }
