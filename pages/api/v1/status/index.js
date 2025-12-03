@@ -1,7 +1,7 @@
 import { DATABASE } from '@/infra/config';
 import database from '@/infra/database';
 
-export default async function status(request, response) {
+export default async function status(_request, response) {
   const updatedAt = new Date().toISOString();
   const {
     rows: [{ server_version: version }],

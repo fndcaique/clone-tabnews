@@ -3,11 +3,7 @@
   "formatter": "language_server",
   "languages": {
     "JavaScript": {
-      "language_servers": [
-        "tsgo",
-        "vtsls",
-        "biome"
-      ],
+      "language_servers": ["tsgo", "vtsls", "biome"],
       "formatter": {
         "language_server": {
           "name": "biome"
