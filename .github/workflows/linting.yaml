@@ -3,7 +3,7 @@ name: Linting
 on: pull_request
 
 jobs:
-  jest:
+  biome:
     name: Biome
     runs-on: ubuntu-latest
     steps:
@@ -16,3 +16,18 @@ jobs:
       - run: npm ci
 
       - run: npm run lint
+  commitlint:
+    name: Commitlint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: v22.20.0
+
+      - run: npm ci
+
+      - run: npx commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }} --verbose
