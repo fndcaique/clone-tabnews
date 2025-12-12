@@ -1,0 +1,1 @@
+pnpm install && git add pnpm-lock.yaml
