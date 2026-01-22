@@ -8,9 +8,9 @@
   "main": "index.js",
   "scripts": {
     "dev": "npm run services:up && npm run wait-for-postgres && npm run migration:up && next dev",
-    "services:up": "./infra/scripts/compose.sh up -d",
-    "services:stop": "./infra/scripts/compose.sh stop",
-    "services:down": "./infra/scripts/compose.sh down -v",
+    "services:up": "docker compose -f ./infra/compose.yaml up -d",
+    "services:stop": "docker compose -f ./infra/compose.yaml stop",
+    "services:down": "docker compose -f ./infra/compose.yaml down -v",
     "lint": "biome check",
     "lint:fix": "biome check --write",
     "test": "npm run services:up && concurrently -n next,jest --hide next -k -s command-jest \"next dev\" \"NODE_OPTIONS=--experimental-vm-modules jest --runInBand --verbose\"",
