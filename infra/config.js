@@ -7,11 +7,9 @@ const __dirname = dirname(__filename);
 
 const env = process.env.NODE_ENV || 'development';
 
-console.log({ env });
-
 const isProduction = env === 'production';
 const envFileName = `.env.${isProduction ? 'production' : 'development'}`;
-dotenv.config({ path: resolve(__dirname, '..', envFileName) });
+dotenv.config({ path: resolve(__dirname, '..', envFileName), quiet: true });
 
 const getDatabaseSslValue = () => {
   if (process.env.POSTGRES_CA) {
