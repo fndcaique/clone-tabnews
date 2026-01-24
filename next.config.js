@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   outputFileTracingIncludes: {
-    '/api/**/*': ['./infra/migrations/**/*'],
+    '/api/**/*': ['./infra/migrations/**/*', './package.json'],
   },
 };
 
