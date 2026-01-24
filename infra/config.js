@@ -24,6 +24,9 @@ const getDatabaseSslValue = () => {
   return ['production', 'staging'].includes(appEnv);
 };
 
+const migrationsDir = resolve(__dirname, 'migrations');
+console.log({ migrationsDir });
+
 const DATABASE = {
   host: process.env.POSTGRES_HOST,
   port: Number.parseInt(process.env.POSTGRES_PORT, 10),
@@ -32,7 +35,7 @@ const DATABASE = {
   database: process.env.POSTGRES_DB,
   ssl: getDatabaseSslValue(),
   migrations: {
-    directory: resolve(__dirname, 'migrations'),
+    directory: migrationsDir,
     tableName: 'pgmigrations',
   },
 };

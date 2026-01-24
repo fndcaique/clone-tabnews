@@ -22,7 +22,9 @@
     "lint": "biome check",
     "lint:fix": "biome check --write",
     "prepare": "husky",
-    "commit": "cz"
+    "commit": "cz",
+    "build": "APP_ENV=production next build",
+    "start": "APP_ENV=production node .next/standalone/server.js"
   },
   "dependencies": {
     "async-retry": "1.3.3",
