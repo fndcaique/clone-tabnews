@@ -32,7 +32,7 @@ const DATABASE = {
   database: process.env.POSTGRES_DB,
   ssl: getDatabaseSslValue(),
   migrations: {
-    directory: resolve(__dirname, 'migrations'),
+    directory: resolve(__dirname, '..', 'infra', 'migrations'),
     tableName: 'pgmigrations',
   },
 };
