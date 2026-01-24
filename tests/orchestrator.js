@@ -9,7 +9,7 @@ const fetchStatusPage = async () => {
 };
 const waitForWebServer = async () => {
   return await AsyncRetry(fetchStatusPage, {
-    retries: 100,
+    retries: 30,
     maxTimeout: 1000,
     onRetry: (error, attempt) => {
       console.log(`Attempt ${attempt} failed. Reason: ${error.message}`);
