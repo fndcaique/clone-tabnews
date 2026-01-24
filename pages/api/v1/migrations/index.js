@@ -1,13 +1,13 @@
-import { resolve } from 'node:path';
 import * as NodePgMigrate from 'node-pg-migrate';
+import { DATABASE } from '@/infra/config';
 import database from '@/infra/database';
 
 const defaultMigrationOptions = {
   dryRun: true,
-  dir: resolve('infra', 'migrations'),
+  dir: DATABASE.migrations.directory,
   direction: 'up',
   log: () => {},
-  migrationsTable: 'pgmigrations',
+  migrationsTable: DATABASE.migrations.tableName,
 };
 const listPendingMigrations = async () => {
   let dbClient;

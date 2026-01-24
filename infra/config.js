@@ -10,8 +10,6 @@ const appEnv = process.env.APP_ENV || 'development';
 const appEnvFileName = `.env.${appEnv}`;
 const appEnvFilePath = resolve(__dirname, '..', appEnvFileName);
 
-console.log({ appEnv, appEnvFilePath });
-
 dotenv.config({ path: appEnvFilePath, quiet: true, override: true });
 
 const getDatabaseSslValue = () => {
@@ -24,6 +22,8 @@ const getDatabaseSslValue = () => {
   return ['production', 'staging'].includes(appEnv);
 };
 
+const migrationsDir = resolve(__dirname, 'migrations');
+
 const DATABASE = {
   host: process.env.POSTGRES_HOST,
   port: Number.parseInt(process.env.POSTGRES_PORT, 10),
@@ -32,7 +32,7 @@ const DATABASE = {
   database: process.env.POSTGRES_DB,
   ssl: getDatabaseSslValue(),
   migrations: {
-    directory: resolve(__dirname, 'migrations'),
+    directory: migrationsDir,
     tableName: 'pgmigrations',
   },
 };
