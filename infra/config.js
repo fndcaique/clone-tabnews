@@ -1,12 +1,14 @@
-import { resolve } from 'node:path';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import dotenv from 'dotenv';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const appEnv = process.env.APP_ENV || 'development';
 
 const appEnvFileName = `.env.${appEnv}`;
-const appEnvFilePath = resolve(process.cwd(), appEnvFileName);
-
-console.log({ appEnv, appEnvFilePath });
+const appEnvFilePath = resolve(__dirname, '..', appEnvFileName);
 
 dotenv.config({ path: appEnvFilePath, quiet: true, override: true });
 
@@ -20,8 +22,7 @@ const getDatabaseSslValue = () => {
   return ['production', 'staging'].includes(appEnv);
 };
 
-const migrationsDir = resolve(process.cwd(), 'infra', 'migrations');
-console.log({ migrationsDir });
+const migrationsDir = resolve(__dirname, 'migrations');
 
 const DATABASE = {
   host: process.env.POSTGRES_HOST,
