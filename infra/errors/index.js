@@ -1,7 +1,7 @@
 export class BaseError extends Error {
-  constructor({ message, action, statusCode, cause }) {
+  constructor({ name, message, action, statusCode, cause }) {
     super(message, { cause });
-    this.name = this.constructor.name;
+    this.name = name;
     this.action = action;
     this.statusCode = statusCode;
     Error.captureStackTrace(this, this.constructor);
@@ -18,11 +18,14 @@ export class BaseError extends Error {
 }
 
 export class InternalServerError extends BaseError {
-  constructor({
-    message = 'An unexpected internal error occured',
-    action = 'Please try again later or contact the support team if the problem persists',
-    cause,
-  } = {}) {
-    super({ message, action, statusCode: 500, cause });
+  constructor({ cause } = {}) {
+    super({
+      name: 'InternalServerError',
+      message: 'An unexpected internal error occured',
+      action:
+        'Please try again later or contact the support team if the problem persists',
+      statusCode: 500,
+      cause,
+    });
   }
 }
