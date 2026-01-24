@@ -11,7 +11,7 @@ if (!migrationName) {
 
 const filePrefix = Date.now().toString();
 
-const fileName = `${filePrefix}_${migrationName}.js`;
+const fileName = `${filePrefix}_${migrationName}.mjs`;
 
 const migrationsDir = DATABASE.migrations.directory;
 const filePath = path.resolve(migrationsDir, fileName);
