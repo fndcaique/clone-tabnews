@@ -5,11 +5,14 @@ import dotenv from 'dotenv';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const env = process.env.NODE_ENV || 'development';
+const appEnv = process.env.APP_ENV || 'development';
 
-const isProduction = env === 'production';
-const envFileName = `.env.${isProduction ? 'production' : 'development'}`;
-dotenv.config({ path: resolve(__dirname, '..', envFileName), quiet: true });
+const appEnvFileName = `.env.${appEnv}`;
+const appEnvFilePath = resolve(__dirname, '..', appEnvFileName);
+
+console.log({ appEnv, appEnvFilePath });
+
+dotenv.config({ path: appEnvFilePath, quiet: true, override: true });
 
 const getDatabaseSslValue = () => {
   if (process.env.POSTGRES_CA) {
@@ -18,10 +21,10 @@ const getDatabaseSslValue = () => {
       ca: process.env.POSTGRES_CA,
     };
   }
-  return isProduction;
+  return ['production', 'staging'].includes(appEnv);
 };
 
-export const DATABASE = {
+const DATABASE = {
   host: process.env.POSTGRES_HOST,
   port: Number.parseInt(process.env.POSTGRES_PORT, 10),
   user: process.env.POSTGRES_USER,
@@ -33,3 +36,5 @@ export const DATABASE = {
     tableName: 'pgmigrations',
   },
 };
+
+export { DATABASE };
