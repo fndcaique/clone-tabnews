@@ -41,6 +41,7 @@ const query = async (...params) => {
     return await client.query(...params);
   } catch (error) {
     console.error(error);
+    throw error;
   } finally {
     if (client) {
       await client.end();
