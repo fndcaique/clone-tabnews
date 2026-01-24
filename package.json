@@ -7,9 +7,9 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "dev": "npm run services:up && npm run services:wait:database && npm run migrations:up && (trap 'npm run services:stop' INT TERM ; next dev)",
+    "dev": "APP_ENV=development npm run services:up && npm run services:wait:database && npm run migrations:up && (trap 'npm run services:stop' INT TERM ; next dev)",
     "dev:staging": "APP_ENV=staging next dev",
-    "test": "npm run services:up && npm run services:wait:database && concurrently -n next,jest -k -s command-jest \"next dev\" \"NODE_OPTIONS=--experimental-vm-modules jest --runInBand --verbose\"",
+    "test": "APP_ENV=development npm run services:up && npm run services:wait:database && concurrently -n next,jest -k -s command-jest \"next dev\" \"NODE_OPTIONS=--experimental-vm-modules jest --runInBand --verbose\"",
     "posttest": "npm run services:stop",
     "test:watch": "NODE_OPTIONS=--experimental-vm-modules jest --watchAll --runInBand --verbose",
     "services:up": "docker compose -f infra/compose.yaml up -d",
