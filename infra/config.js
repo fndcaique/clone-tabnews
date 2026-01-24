@@ -1,4 +1,4 @@
-import { dirname, join, resolve } from 'node:path';
+import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import dotenv from 'dotenv';
 
@@ -7,11 +7,9 @@ const __dirname = dirname(__filename);
 
 const env = process.env.NODE_ENV || 'development';
 
-console.log({ env });
-
 const isProduction = env === 'production';
 const envFileName = `.env.${isProduction ? 'production' : 'development'}`;
-dotenv.config({ path: resolve(__dirname, '..', envFileName) });
+dotenv.config({ path: resolve(__dirname, '..', envFileName), quiet: true });
 
 const getDatabaseSslValue = () => {
   if (process.env.POSTGRES_CA) {
@@ -31,7 +29,7 @@ export const DATABASE = {
   database: process.env.POSTGRES_DB,
   ssl: getDatabaseSslValue(),
   migrations: {
-    directory: join(__dirname, 'migrations'),
+    directory: resolve(__dirname, 'migrations'),
     tableName: 'pgmigrations',
   },
 };

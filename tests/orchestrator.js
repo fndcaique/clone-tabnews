@@ -1,4 +1,5 @@
 import AsyncRetry from 'async-retry';
+import database from '@/infra/database';
 
 const fetchStatusPage = async () => {
   const response = await fetch('http://localhost:3000/api/v1/status');
@@ -8,7 +9,7 @@ const fetchStatusPage = async () => {
 };
 const waitForWebServer = async () => {
   return await AsyncRetry(fetchStatusPage, {
-    retries: 100,
+    retries: 30,
     maxTimeout: 1000,
     onRetry: (error, attempt) => {
       console.log(`Attempt ${attempt} failed. Reason: ${error.message}`);
@@ -19,6 +20,11 @@ const waitForAllServices = async () => {
   await waitForWebServer();
 };
 
+const clearDatabase = async () => {
+  await database.query('DROP schema public CASCADE; CREATE schema public;');
+};
+
 export const orchestrator = {
   waitForAllServices,
+  clearDatabase,
 };

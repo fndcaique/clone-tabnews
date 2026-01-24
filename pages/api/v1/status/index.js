@@ -3,9 +3,11 @@ import database from '@/infra/database';
 
 export default async function status(_request, response) {
   const updatedAt = new Date().toISOString();
+  const showVersionQueryResult = await database.query('SHOW server_version;');
+
   const {
     rows: [{ server_version: version }],
-  } = await database.query('SHOW server_version;');
+  } = showVersionQueryResult;
 
   const {
     rows: [{ max_connections }],

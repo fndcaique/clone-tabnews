@@ -14,7 +14,7 @@ const filePrefix = new Date().toISOString().substring(0, 19).replace(/\D/g, '');
 const fileName = `${filePrefix}_${migrationName}.js`;
 
 const migrationsDir = DATABASE.migrations.directory;
-const filePath = path.join(migrationsDir, fileName);
+const filePath = path.resolve(migrationsDir, fileName);
 
 const template = `/**
  * @type {import('node-pg-migrate').ColumnDefinitions | undefined}

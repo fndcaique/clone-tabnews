@@ -23,6 +23,7 @@ const getClient = async () => {
       database: DATABASE.database,
       ssl: DATABASE.ssl,
     };
+    console.log('Connecting to database...');
     clientInstance = new Client(connectionConfig);
     await clientInstance.connect();
   }
