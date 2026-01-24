@@ -1,14 +1,10 @@
-import { dirname, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { resolve } from 'node:path';
 import dotenv from 'dotenv';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 const appEnv = process.env.APP_ENV || 'development';
 
 const appEnvFileName = `.env.${appEnv}`;
-const appEnvFilePath = resolve(__dirname, '..', appEnvFileName);
+const appEnvFilePath = resolve(process.cwd(), appEnvFileName);
 
 console.log({ appEnv, appEnvFilePath });
 
@@ -24,7 +20,7 @@ const getDatabaseSslValue = () => {
   return ['production', 'staging'].includes(appEnv);
 };
 
-const migrationsDir = resolve(__dirname, 'migrations');
+const migrationsDir = resolve(process.cwd(), 'infra', 'migrations');
 console.log({ migrationsDir });
 
 const DATABASE = {

@@ -9,7 +9,7 @@ if (!migrationName) {
   process.exit(1);
 }
 
-const filePrefix = new Date().toISOString().substring(0, 19).replace(/\D/g, '');
+const filePrefix = Date.now().toString();
 
 const fileName = `${filePrefix}_${migrationName}.js`;
 
