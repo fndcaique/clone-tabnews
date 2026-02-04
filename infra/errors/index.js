@@ -18,14 +18,37 @@ export class BaseError extends Error {
 }
 
 export class InternalServerError extends BaseError {
-  constructor({ cause } = {}) {
+  constructor({ cause, statusCode } = {}) {
     super({
       name: 'InternalServerError',
       message: 'An unexpected internal error occured',
       action:
         'Please try again later or contact the support team if the problem persists',
-      statusCode: 500,
+      statusCode: statusCode || 500,
       cause,
+    });
+  }
+}
+
+export class ServiceError extends BaseError {
+  constructor({ cause, message } = {}) {
+    super({
+      name: 'ServiceError',
+      message: message || 'Service is unavailable',
+      action: 'Verify that the service is available',
+      statusCode: 503,
+      cause,
+    });
+  }
+}
+
+export class MethodNotAllowedError extends BaseError {
+  constructor() {
+    super({
+      name: 'MethodNotAllowedError',
+      message: 'Method not allowed for this endpoint',
+      action: 'Verify that the HTTP method is allowed for this endpoint',
+      statusCode: 405,
     });
   }
 }

@@ -1,5 +1,6 @@
 import { Client } from 'pg';
 import { DATABASE } from './config';
+import { ServiceError } from './errors';
 
 let connectionConfig = null;
 let clientInstance = null;
@@ -24,24 +25,30 @@ const getClient = async () => {
       ssl: DATABASE.ssl,
     };
     clientInstance = new Client(connectionConfig);
-    await clientInstance.connect();
+    try {
+      await clientInstance.connect();
+    } catch (error) {
+      const serviceError = new ServiceError({
+        cause: error,
+        message: 'Error connecting to database',
+      });
+      throw serviceError;
+    }
   }
   return clientInstance;
 };
 
 const query = async (...params) => {
   let client;
+  client = await getClient();
   try {
-    try {
-      client = await getClient();
-    } catch (error) {
-      console.error('Error connecting to database:', error);
-      throw error;
-    }
     return await client.query(...params);
   } catch (error) {
-    console.error(error);
-    throw error;
+    const serviceError = new ServiceError({
+      cause: error,
+      message: 'Error executing query',
+    });
+    throw serviceError;
   } finally {
     if (client) {
       await client.end();
