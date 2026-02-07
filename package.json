@@ -18,7 +18,6 @@
     "services:wait:database": "node infra/scripts/wait-for-postgres.js",
     "migrations:create": "node infra/scripts/create-migration.js",
     "migrations:up": "node-pg-migrate -m infra/migrations --envPath .env.development up",
-    "migrations:down": "node-pg-migrate -m infra/migrations --envPath .env.development down",
     "lint": "biome check",
     "lint:fix": "biome check --write",
     "prepare": "husky",
