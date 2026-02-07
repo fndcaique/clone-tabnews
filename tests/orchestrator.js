@@ -1,5 +1,6 @@
 import AsyncRetry from 'async-retry';
 import database from '@/infra/database';
+import { migrator } from '@/models/migrator';
 
 const fetchStatusPage = async () => {
   const response = await fetch('http://localhost:3000/api/v1/status');
@@ -24,7 +25,12 @@ const clearDatabase = async () => {
   await database.query('DROP schema public CASCADE; CREATE schema public;');
 };
 
+const runPendingMigrations = async () => {
+  await migrator.runPendingMigrations();
+};
+
 export const orchestrator = {
   waitForAllServices,
   clearDatabase,
+  runPendingMigrations,
 };
