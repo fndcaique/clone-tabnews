@@ -63,3 +63,14 @@ export class ValidationError extends BaseError {
     });
   }
 }
+
+export class NotFoundError extends BaseError {
+  constructor({ message, action } = {}) {
+    super({
+      name: 'NotFoundError',
+      message: message || 'Resource not found',
+      action: action || 'Verify that the params sent are correct',
+      statusCode: 404,
+    });
+  }
+}
