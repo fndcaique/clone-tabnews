@@ -1,5 +1,5 @@
 import database from '@/infra/database';
-import { ValidationError } from '@/infra/errors';
+import { NotFoundError, ValidationError } from '@/infra/errors';
 import { Id } from './id';
 
 const insertUser = async (userInputValues) => {
@@ -45,4 +45,33 @@ const create = async (userInputValues) => {
   return newUser;
 };
 
-export const User = { create };
+const selectByUsername = async (username) => {
+  const result = await database.query({
+    text: `
+      SELECT
+        id, username, email, created_at, updated_at
+      FROM
+        users
+      WHERE
+        LOWER(username) = $1
+      LIMIT
+        1
+      ;`,
+    values: [username.toLowerCase()],
+  });
+  if (!result.rowCount) {
+    throw new NotFoundError({
+      message: `User with username '${username}' not found`,
+      action: 'Verify that the username is correct',
+      status_code: 404,
+    });
+  }
+  return result.rows[0];
+};
+
+const findOneByUsername = async (username) => {
+  const userFound = await selectByUsername(username);
+  return userFound;
+};
+
+export const User = { create, findOneByUsername };
