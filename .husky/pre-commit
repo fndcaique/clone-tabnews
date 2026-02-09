@@ -1,1 +1,1 @@
-pnpm install && git add pnpm-lock.yaml
+npm install && pnpm install && git add package-lock.json pnpm-lock.yaml

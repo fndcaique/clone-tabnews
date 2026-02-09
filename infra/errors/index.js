@@ -52,3 +52,25 @@ export class MethodNotAllowedError extends BaseError {
     });
   }
 }
+
+export class ValidationError extends BaseError {
+  constructor({ message, action } = {}) {
+    super({
+      name: 'ValidationError',
+      message: message || 'Validation failed',
+      action: action || 'Verify that the request data is valid',
+      statusCode: 400,
+    });
+  }
+}
+
+export class NotFoundError extends BaseError {
+  constructor({ message, action } = {}) {
+    super({
+      name: 'NotFoundError',
+      message: message || 'Resource not found',
+      action: action || 'Verify that the params sent are correct',
+      statusCode: 404,
+    });
+  }
+}
