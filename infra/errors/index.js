@@ -52,3 +52,14 @@ export class MethodNotAllowedError extends BaseError {
     });
   }
 }
+
+export class ValidationError extends BaseError {
+  constructor({ message, action } = {}) {
+    super({
+      name: 'ValidationError',
+      message: message || 'Validation failed',
+      action: action || 'Verify that the request data is valid',
+      statusCode: 400,
+    });
+  }
+}

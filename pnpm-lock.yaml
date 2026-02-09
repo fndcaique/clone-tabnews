@@ -33,7 +33,7 @@ importers:
         specifier: 2.3.8
         version: 2.3.8(react@19.2.3)
       uuid:
-        specifier: ^13.0.0
+        specifier: 13.0.0
         version: 13.0.0
     devDependencies:
       '@biomejs/biome':
