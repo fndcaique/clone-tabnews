@@ -1,9 +1,11 @@
 import database from '@/infra/database';
 import { NotFoundError, ValidationError } from '@/infra/errors';
 import { Id } from './id';
+import { Password } from './password';
 
 const insertUser = async (userInputValues) => {
   try {
+    const hashedPassword = await Password.hash(userInputValues.password);
     const result = await database.query({
       text: `
         INSERT INTO users
@@ -17,7 +19,7 @@ const insertUser = async (userInputValues) => {
         Id.generate(),
         userInputValues.username,
         userInputValues.email,
-        userInputValues.password,
+        hashedPassword,
       ],
     });
     return result.rows[0];
@@ -49,7 +51,7 @@ const selectByUsername = async (username) => {
   const result = await database.query({
     text: `
       SELECT
-        id, username, email, created_at, updated_at
+        id, username, email, password, created_at, updated_at
       FROM
         users
       WHERE

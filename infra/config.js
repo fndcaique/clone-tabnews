@@ -24,7 +24,7 @@ const getDatabaseSslValue = () => {
 
 const migrationsDir = resolve(__dirname, 'migrations');
 
-const DATABASE = {
+export const DATABASE = {
   host: process.env.POSTGRES_HOST,
   port: Number.parseInt(process.env.POSTGRES_PORT, 10),
   user: process.env.POSTGRES_USER,
@@ -37,4 +37,7 @@ const DATABASE = {
   },
 };
 
-export { DATABASE };
+export const SECRET = {
+  pepper: process.env.SECRET_PEPPER,
+  rounds: process.env.NODE_ENV === 'production' ? 14 : 1,
+};

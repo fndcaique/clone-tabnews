@@ -5,6 +5,7 @@ import { User } from '@/models/user';
 async function postHandler(request, response) {
   const userInputValues = request.body;
   const newUser = await User.create(userInputValues);
+  delete newUser.password;
   response.status(201).json(newUser);
 }
 
