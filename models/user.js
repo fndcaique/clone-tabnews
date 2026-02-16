@@ -1,9 +1,28 @@
 import database from '@/infra/database';
 import { NotFoundError, ValidationError } from '@/infra/errors';
 import { Id } from './id';
+import { Password } from './password';
+
+const verifyConstraintErrors = (error) => {
+  if (error.cause.code === '23505') {
+    if (error.cause.constraint === 'users_username_lowercase_unique_idx') {
+      throw new ValidationError({
+        message: 'Username already in use',
+        action: 'Please try a different username',
+      });
+    }
+    if (error.cause.constraint === 'users_email_lowercase_unique_idx') {
+      throw new ValidationError({
+        message: 'Email already in use',
+        action: 'Please try a different email',
+      });
+    }
+  }
+};
 
 const insertUser = async (userInputValues) => {
   try {
+    const hashedPassword = await Password.hash(userInputValues.password);
     const result = await database.query({
       text: `
         INSERT INTO users
@@ -11,31 +30,18 @@ const insertUser = async (userInputValues) => {
         VALUES
           ($1, $2, $3, $4)
         RETURNING
-          id, username, email, created_at, updated_at
+          *
         ;`,
       values: [
         Id.generate(),
         userInputValues.username,
         userInputValues.email,
-        userInputValues.password,
+        hashedPassword,
       ],
     });
     return result.rows[0];
   } catch (error) {
-    if (error.cause.code === '23505') {
-      if (error.cause.constraint === 'users_username_lowercase_unique_idx') {
-        throw new ValidationError({
-          message: 'Username already in use',
-          action: 'Please try a different username',
-        });
-      }
-      if (error.cause.constraint === 'users_email_lowercase_unique_idx') {
-        throw new ValidationError({
-          message: 'Email already in use',
-          action: 'Please try a different email',
-        });
-      }
-    }
+    verifyConstraintErrors(error);
     throw error;
   }
 };
@@ -49,7 +55,7 @@ const selectByUsername = async (username) => {
   const result = await database.query({
     text: `
       SELECT
-        id, username, email, created_at, updated_at
+        *
       FROM
         users
       WHERE
@@ -74,4 +80,45 @@ const findOneByUsername = async (username) => {
   return userFound;
 };
 
-export const User = { create, findOneByUsername };
+const update = async (username, userInputValues) => {
+  const currentUser = await findOneByUsername(username);
+  const newUserValues = { ...currentUser };
+  if ('username' in userInputValues) {
+    newUserValues.username = userInputValues.username;
+  }
+  if ('email' in userInputValues) {
+    newUserValues.email = userInputValues.email;
+  }
+  if ('password' in userInputValues) {
+    newUserValues.password = await Password.hash(userInputValues.password);
+  }
+  try {
+    const results = await database.query({
+      text: `
+      UPDATE
+        users
+      SET
+        username = $2,
+        email = $3,
+        password = $4,
+        updated_at = timezone('utc', now())
+      WHERE
+        id = $1
+      RETURNING
+        *
+      ;`,
+      values: [
+        newUserValues.id,
+        newUserValues.username,
+        newUserValues.email,
+        newUserValues.password,
+      ],
+    });
+    return results.rows[0];
+  } catch (error) {
+    verifyConstraintErrors(error);
+    throw error;
+  }
+};
+
+export const User = { create, findOneByUsername, update };
