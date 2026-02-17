@@ -1,8 +1,8 @@
 import { faker } from '@faker-js/faker';
 import AsyncRetry from 'async-retry';
-import database from '@/infra/database.js';
-import { migrator } from '@/models/migrator.js';
-import { User } from '@/models/user.js';
+import database from '@/infra/database';
+import { migrator } from '@/models/migrator';
+import { User } from '@/models/user';
 
 const fetchStatusPage = async () => {
   const response = await fetch('http://localhost:3000/api/v1/status');
@@ -32,7 +32,7 @@ const runPendingMigrations = async () => {
 };
 
 const user = {
-  create: async ({ username, email, password }) => {
+  create: async ({ username, email, password } = {}) => {
     const user = {
       username: username || faker.internet.username(),
       email: email || faker.internet.email(),
