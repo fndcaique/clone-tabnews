@@ -80,6 +80,35 @@ const findOneByUsername = async (username) => {
   return userFound;
 };
 
+const selectByEmail = async (email) => {
+  const result = await database.query({
+    text: `
+      SELECT
+        *
+      FROM
+        users
+      WHERE
+        email = $1
+      LIMIT
+        1
+      ;`,
+    values: [email],
+  });
+  if (!result.rowCount) {
+    throw new NotFoundError({
+      message: `User with email '${email}' not found`,
+      action: 'Verify that the email is correct',
+      status_code: 404,
+    });
+  }
+  return result.rows[0];
+};
+
+const findOneByEmail = async (email) => {
+  const userFound = await selectByEmail(email);
+  return userFound;
+};
+
 const update = async (username, userInputValues) => {
   const currentUser = await findOneByUsername(username);
   const newUserValues = { ...currentUser };
@@ -121,4 +150,9 @@ const update = async (username, userInputValues) => {
   }
 };
 
-export const User = { create, findOneByUsername, update };
+export const User = {
+  create,
+  findOneByUsername,
+  update,
+  findOneByEmail,
+};

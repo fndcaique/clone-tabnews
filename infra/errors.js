@@ -74,3 +74,14 @@ export class NotFoundError extends BaseError {
     });
   }
 }
+
+export class UnauthorizedError extends BaseError {
+  constructor({ message, action } = {}) {
+    super({
+      name: 'UnauthorizedError',
+      message: message || 'Unauthorized',
+      action: action || 'Verify that the credentials are correct',
+      statusCode: 401,
+    });
+  }
+}

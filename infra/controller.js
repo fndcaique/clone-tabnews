@@ -2,6 +2,7 @@ import {
   InternalServerError,
   MethodNotAllowedError,
   NotFoundError,
+  UnauthorizedError,
   ValidationError,
 } from '@/infra/errors';
 
@@ -12,13 +13,16 @@ export function onNoMatchHandler(_request, response) {
 }
 
 export function onErrorHandler(error, _request, response) {
-  if (error instanceof ValidationError || error instanceof NotFoundError) {
+  if (
+    error instanceof ValidationError ||
+    error instanceof NotFoundError ||
+    error instanceof UnauthorizedError
+  ) {
     response.status(error.statusCode).json(error);
     return;
   }
   const publicErrorObject = new InternalServerError({
     cause: error,
-    statusCode: error.statusCode,
   });
   console.error(publicErrorObject);
   response.status(publicErrorObject.statusCode).json(publicErrorObject);
